@@ -5,7 +5,7 @@ Type-safe measurement conversion for JavaScript, TypeScript, and modern apps.
 ## Install
 
 ```sh
-bun add @coreify/unit
+npm install @coreify/unit
 ```
 
 ## Usage
