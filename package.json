@@ -1,0 +1,75 @@
+{
+  "name": "@coreify/unit",
+  "version": "0.1.0",
+  "description": "Type-safe measurement conversion for JavaScript, TypeScript, and modern apps.",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "bench": "bun scripts/bench.ts",
+    "ci": "bun run lint && bun run typecheck && bun run test",
+    "test": "bun run build && vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\""
+  },
+  "license": "MIT",
+  "author": "Coreify",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreify/unit.git"
+  },
+  "homepage": "https://unit.js.org",
+  "bugs": {
+    "url": "https://github.com/coreify/unit/issues"
+  },
+  "prepack": "bun run build",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "terser": "^5.46.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "vitest": "^4.1.2"
+  },
+  "keywords": [
+    "measurement",
+    "unit",
+    "conversion",
+    "convert",
+    "area",
+    "mass",
+    "length",
+    "volume",
+    "typescript"
+  ]
+}
