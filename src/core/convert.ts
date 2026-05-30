@@ -38,19 +38,17 @@ export function convertMany(
   assertFiniteNumber(value, "value");
 
   const fromUnit = getUnit(from);
+  const converted: Record<string, number> = {};
 
-  return Object.fromEntries(
-    units.map((unit) => {
-      const toUnit = getUnit(unit);
-      return [
-        unit,
-        applyPrecision(
-          convertValue(value, fromUnit, toUnit, from, unit),
-          options
-        )
-      ];
-    })
-  );
+  for (const unit of units) {
+    const toUnit = getUnit(unit);
+    converted[unit] = applyPrecision(
+      convertValue(value, fromUnit, toUnit, from, unit),
+      options
+    );
+  }
+
+  return converted;
 }
 
 export function convertDetailed(
@@ -66,8 +64,9 @@ export function convertDetailed(
 
   const rawValue = convertValue(value, fromUnit, toUnit, from, to);
   const converted = applyPrecision(rawValue, options);
-  const fromFactor = getOptionalFactor(fromUnit.id);
-  const toFactor = getOptionalFactor(toUnit.id);
+  const fromFactor = getOptionalFactor(fromUnit);
+  const toFactor = getOptionalFactor(toUnit);
+  const regionalUnit = REGIONAL_UNITS.has(fromUnit.id) ? fromUnit.id : toUnit.id;
   const baseValue =
     fromUnit.category === "temperature"
       ? toCelsius(value, fromUnit.id)
@@ -81,10 +80,10 @@ export function convertDetailed(
     });
   }
 
-  if (REGIONAL_UNITS.has(fromUnit.id) || REGIONAL_UNITS.has(toUnit.id)) {
+  if (REGIONAL_UNITS.has(regionalUnit)) {
     warnings.push({
       code: "regional-unit",
-      message: `${REGIONAL_UNITS.has(fromUnit.id) ? fromUnit.id : toUnit.id} can vary by region. Verify local definition before storing or comparing values.`
+      message: `${regionalUnit} can vary by region. Verify local definition before storing or comparing values.`
     });
   }
 
@@ -109,12 +108,12 @@ export function convertDetailed(
   return detailed;
 }
 
-function getFactor(unit: string): number {
-  const factor = UNIT_FACTORS[unit as keyof typeof UNIT_FACTORS];
+function getFactor(unit: UnitDefinition): number {
+  const factor = unit.toBaseFactor ?? UNIT_FACTORS[unit.id as keyof typeof UNIT_FACTORS];
 
   if (typeof factor !== "number") {
     throw new InvalidMeasurementError(
-      `Unit "${unit}" does not have linear conversion factor. Use compatible linear unit or unit-specific conversion flow.`
+      `Unit "${unit.id}" does not have linear conversion factor. Use compatible linear unit or unit-specific conversion flow.`
     );
   }
 
@@ -134,11 +133,11 @@ function convertValue(
 
   return fromUnit.category === "temperature"
     ? convertTemperature(value, fromUnit.id, toUnit.id)
-    : (value * getFactor(fromUnit.id)) / getFactor(toUnit.id);
+    : (value * getFactor(fromUnit)) / getFactor(toUnit);
 }
 
-function getOptionalFactor(unit: UnitId): number | undefined {
-  return UNIT_FACTORS[unit as keyof typeof UNIT_FACTORS];
+function getOptionalFactor(unit: UnitDefinition): number | undefined {
+  return unit.toBaseFactor ?? UNIT_FACTORS[unit.id as keyof typeof UNIT_FACTORS];
 }
 
 function convertTemperature(value: number, from: string, to: string): number {

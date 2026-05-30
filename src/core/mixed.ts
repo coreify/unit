@@ -2,7 +2,7 @@ import { applyPrecision, convert } from "./convert";
 import { InvalidMeasurementError } from "./errors";
 import { normalizeBanglaDigits } from "./locale";
 import { countDecimalPlaces } from "./parse";
-import { getUnit, resolveUnit } from "./units";
+import { getUnit } from "./units";
 import type {
   ConvertOptions,
   MixedMeasurement,
@@ -42,15 +42,13 @@ export function parseMixedMeasurement(input: string): MixedMeasurement {
       );
     }
 
-    let unit: ParsedMeasurement["unit"];
+    let definition: ReturnType<typeof getUnit>;
 
     try {
-      unit = resolveUnit(rawUnit);
+      definition = getUnit(rawUnit);
     } catch {
       throw invalidMixedMeasurement(input);
     }
-
-    const definition = getUnit(unit);
 
     if (definition.category === "temperature") {
       throw new InvalidMeasurementError(
@@ -68,7 +66,7 @@ export function parseMixedMeasurement(input: string): MixedMeasurement {
 
     terms.push({
       value,
-      unit,
+      unit: definition.id,
       rawUnit,
       decimalPlaces: countDecimalPlaces(valueText)
     });
@@ -105,10 +103,11 @@ export function normalizeMixedMeasurement(
     );
   }
 
-  const total = mixed.terms.reduce(
-    (sum, term) => sum + convert(term.value, term.unit, target.id),
-    0
-  );
+  let total = 0;
+
+  for (const term of mixed.terms) {
+    total += convert(term.value, term.unit, target.id);
+  }
 
   return applyPrecision(total, options);
 }

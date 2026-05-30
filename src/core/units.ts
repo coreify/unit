@@ -16,10 +16,8 @@ const unitsById = new Map<UnitId, UnitDefinition>(
   ])
 );
 const allUnits = Object.freeze([...unitsById.values()]);
-const unitsByCategory = new Map<
-  MeasurementCategory,
-  readonly UnitDefinition[]
->();
+const unitsByCategory = new Map<MeasurementCategory, readonly UnitDefinition[]>();
+const categoryBuckets = new Map<MeasurementCategory, UnitDefinition[]>();
 
 const aliases = new Map<string, UnitId>();
 
@@ -27,8 +25,13 @@ for (const unit of UNITS) {
   const definition = unitsById.get(unit.id);
 
   if (definition) {
-    const bucket = [...(unitsByCategory.get(unit.category) ?? []), definition];
-    unitsByCategory.set(unit.category, bucket);
+    const bucket = categoryBuckets.get(unit.category);
+
+    if (bucket) {
+      bucket.push(definition);
+    } else {
+      categoryBuckets.set(unit.category, [definition]);
+    }
   }
 
   aliases.set(normalizeUnitKey(unit.id), unit.id);
@@ -44,7 +47,7 @@ for (const unit of UNITS) {
   }
 }
 
-for (const [category, bucket] of unitsByCategory) {
+for (const [category, bucket] of categoryBuckets) {
   unitsByCategory.set(category, Object.freeze([...bucket]));
 }
 

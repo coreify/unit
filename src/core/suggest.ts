@@ -4,17 +4,19 @@ import type { UnitSuggestion } from "../types";
 
 const suggestionIndex = listUnits().map((unit) => ({
   unit: unit.id,
-  labels: [
-    unit.id,
-    unit.symbol,
-    unit.label,
-    ...(unit.aliases ?? []),
-    unit.labelBn,
-    unit.symbolBn,
-    ...(unit.aliasesBn ?? [])
-  ]
-    .filter((item): item is string => typeof item === "string")
-    .map((label) => normalizeUnitKey(label))
+  labels: [...new Set(
+    [
+      unit.id,
+      unit.symbol,
+      unit.label,
+      ...(unit.aliases ?? []),
+      unit.labelBn,
+      unit.symbolBn,
+      ...(unit.aliasesBn ?? [])
+    ]
+      .filter((item): item is string => typeof item === "string")
+      .map((label) => normalizeUnitKey(label))
+  )]
 }));
 
 export function suggestUnit(input: string, limit = 5): UnitSuggestion[] {
@@ -55,7 +57,7 @@ function similarity(a: string, b: string): number {
 
 function levenshtein(a: string, b: string): number {
   const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
-  const current = Array.from({ length: b.length + 1 }, () => 0);
+  const current = new Array<number>(b.length + 1).fill(0);
 
   for (let i = 1; i <= a.length; i += 1) {
     current[0] = i;
@@ -67,7 +69,10 @@ function levenshtein(a: string, b: string): number {
         previous[j - 1]! + cost
       );
     }
-    previous.splice(0, previous.length, ...current);
+
+    for (let j = 0; j <= b.length; j += 1) {
+      previous[j] = current[j]!;
+    }
   }
 
   return previous[b.length]!;

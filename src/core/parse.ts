@@ -1,10 +1,15 @@
 import { InvalidMeasurementError } from "./errors";
 import { normalizeBanglaDigits } from "./locale";
 import { getUnit, resolveUnit } from "./units";
-import type { ParseMeasurementOptions, ParsedMeasurement } from "../types";
+import type {
+  ParseMeasurementOptions,
+  ParsedMeasurement,
+  UnitId
+} from "../types";
 
 const MEASUREMENT_PATTERN =
   /^\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)\s*([^\d\s].*?)\s*$/i;
+const allowedUnitsCache = new WeakMap<readonly string[], ReadonlySet<UnitId>>();
 
 function categoryLabel(
   category: NonNullable<ParseMeasurementOptions["category"]>
@@ -44,22 +49,22 @@ export function parseMeasurement(
     );
   }
 
-  const unit = resolveUnit(match[2]);
-  const definition = getUnit(unit);
+  const rawUnit = match[2].trim();
+  const definition = getUnit(rawUnit);
+  const unit = definition.id;
 
   if (options.category && definition.category !== options.category) {
     throw new InvalidMeasurementError(
-      `Unit "${match[2].trim()}" is not ${categoryLabel(options.category)} unit. Use ${categoryLabel(options.category)} unit instead.`
+      `Unit "${rawUnit}" is not ${categoryLabel(options.category)} unit. Use ${categoryLabel(options.category)} unit instead.`
     );
   }
 
   if (options.allowedUnits) {
-    const allowed = new Set(
-      options.allowedUnits.map((item) => resolveUnit(item))
-    );
+    const allowed = getAllowedUnits(options.allowedUnits);
+
     if (!allowed.has(unit)) {
       throw new InvalidMeasurementError(
-        `Unit "${match[2].trim()}" is not allowed here. Allowed units: ${[...allowed].join(", ")}.`
+        `Unit "${rawUnit}" is not allowed here. Allowed units: ${[...allowed].join(", ")}.`
       );
     }
   }
@@ -79,9 +84,21 @@ export function parseMeasurement(
   return {
     value,
     unit,
-    rawUnit: match[2].trim(),
+    rawUnit,
     decimalPlaces
   };
+}
+
+function getAllowedUnits(units: readonly string[]): ReadonlySet<UnitId> {
+  const cached = allowedUnitsCache.get(units);
+
+  if (cached) {
+    return cached;
+  }
+
+  const resolved = new Set(units.map((item) => resolveUnit(item)));
+  allowedUnitsCache.set(units, resolved);
+  return resolved;
 }
 
 export function countDecimalPlaces(value: string): number {
