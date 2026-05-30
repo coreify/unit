@@ -30,7 +30,11 @@ convert(32, "f", "c"); // 0
 formatMeasurement(2.5, "kg"); // "2.5 kg"
 formatMeasurement(2.5, "kg", { locale: "bn-BD" }); // "২.৫ kg"
 formatMeasurement(2.5, "kg", { locale: "bn-BD", unitDisplay: "label" }); // "২.৫ kilogram"
-formatMeasurement(2.5, "kg", { locale: "bn-BD", unitDisplay: "label", localizeUnits: true }); // "২.৫ কিলোগ্রাম"
+formatMeasurement(2.5, "kg", {
+  locale: "bn-BD",
+  unitDisplay: "label",
+  localizeUnits: true
+}); // "২.৫ কিলোগ্রাম"
 parseMeasurement("১২.৫০ কেজি"); // { value: 12.5, unit: "kg", rawUnit: "কেজি", decimalPlaces: 2 }
 normalizeMixedMeasurement("5 ft 7 in", "in"); // 67
 bestUnit(1532, "m", { precision: 3 }); // { value: 1.532, unit: "km", formatted: "1.532 km" }
@@ -84,6 +88,20 @@ bun run bench --csv
 bun run bench --json --repeats 9 --sample-ms 1200
 ```
 
+### Error messages
+
+Errors aim to be user-facing and actionable.
+
+```ts
+parseMeasurement("banana");
+// InvalidMeasurementError:
+// Could not read "banana" as measurement. Use format like "12.5 kg" or "5 ft".
+
+convert(1, "kg", "banana");
+// UnknownUnitError:
+// Unit "banana" is not recognized. Use known unit ids, symbols, or aliases like "kg", "meter", or "sq_ft".
+```
+
 ### `parseMeasurement(input, options?)`
 
 Parses simple values with units.
@@ -104,7 +122,11 @@ Formats a number with a unit symbol, label, or id.
 formatMeasurement(12.3456, "meter", { maximumFractionDigits: 2 }); // "12.35 m"
 formatMeasurement(12, "meter", { unitDisplay: "label" }); // "12 meter"
 formatMeasurement(12, "meter", { locale: "bn-BD", unitDisplay: "label" }); // "১২ meter"
-formatMeasurement(12, "meter", { locale: "bn-BD", unitDisplay: "label", localizeUnits: true }); // "১২ মিটার"
+formatMeasurement(12, "meter", {
+  locale: "bn-BD",
+  unitDisplay: "label",
+  localizeUnits: true
+}); // "১২ মিটার"
 ```
 
 ## Units

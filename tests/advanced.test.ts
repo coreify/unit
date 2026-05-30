@@ -44,7 +44,7 @@ describe("mixed measurements", () => {
 
   it("rejects mixed measurements with leftover garbage", () => {
     expect(() => parseMixedMeasurement("5 ft nope 7 in")).toThrow(
-      "Could not read \"5 ft nope 7 in\" as mixed measurement"
+      'Could not read "5 ft nope 7 in" as mixed measurement'
     );
   });
 });
@@ -121,9 +121,7 @@ describe("measurement schema", () => {
       issues: [{ code: "required" }]
     });
     expect(schema.validate("2.123 kg").success).toBe(false);
-    expect(() => schema.parse("11 kg")).toThrow(
-      "Value must be at most 10"
-    );
+    expect(() => schema.parse("11 kg")).toThrow("Value must be at most 10");
   });
 });
 

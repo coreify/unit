@@ -85,7 +85,9 @@ const englishDigits = new Map(
   banglaDigits.map((digit, index) => [digit, String(index)])
 );
 
-export function isBanglaLocale(locale: UnitLocale | string | undefined): boolean {
+export function isBanglaLocale(
+  locale: UnitLocale | string | undefined
+): boolean {
   return typeof locale === "string" && locale.toLowerCase().startsWith("bn");
 }
 

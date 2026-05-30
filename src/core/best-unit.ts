@@ -21,20 +21,19 @@ export function bestUnit(
   const source = getUnit(unit);
   const min = options.min ?? 1;
   const max = options.max ?? 1000;
-  const candidates =
-    options.candidates?.length
-      ? options.candidates.map((candidate) => {
-          const definition = getUnit(candidate);
+  const candidates = options.candidates?.length
+    ? options.candidates.map((candidate) => {
+        const definition = getUnit(candidate);
 
-          if (definition.category !== source.category) {
-            throw new InvalidMeasurementError(
-              `bestUnit candidates must stay in ${source.category}: ${candidate}`
-            );
-          }
+        if (definition.category !== source.category) {
+          throw new InvalidMeasurementError(
+            `bestUnit candidates must stay in ${source.category}: ${candidate}`
+          );
+        }
 
-          return definition.id;
-        })
-      : DEFAULT_CANDIDATES[source.category] ?? [source.id];
+        return definition.id;
+      })
+    : (DEFAULT_CANDIDATES[source.category] ?? [source.id]);
   let fallback = source.id;
   let fallbackValue = value;
 

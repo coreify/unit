@@ -67,8 +67,7 @@ const tasks: BenchTask[] = [
   {
     name: "convertMany",
     before: () => baselineConvertMany(123.456, "kg", convertManyUnits, 3),
-    after: () =>
-      convertMany(123.456, "kg", convertManyUnits, { precision: 3 })
+    after: () => convertMany(123.456, "kg", convertManyUnits, { precision: 3 })
   },
   {
     name: "parseMixedMeasurement",
@@ -107,11 +106,7 @@ function getOutputMode(args: string[]): OutputMode {
   return "text";
 }
 
-function getNumberArg(
-  args: string[],
-  flag: string,
-  fallback: number
-): number {
+function getNumberArg(args: string[], flag: string, fallback: number): number {
   const index = args.indexOf(flag);
 
   if (index === -1) return fallback;
@@ -191,7 +186,9 @@ function runBenchSet(
     samples.push(runBench(label, fn, benchConfig));
   }
 
-  const meanValues = samples.map((sample) => sample.meanMs).sort((a, b) => a - b);
+  const meanValues = samples
+    .map((sample) => sample.meanMs)
+    .sort((a, b) => a - b);
   const opsValues = samples
     .map((sample) => sample.opsPerSecond)
     .sort((a, b) => a - b);

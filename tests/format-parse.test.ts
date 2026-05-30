@@ -33,7 +33,9 @@ describe("unit metadata", () => {
     lengthUnits.pop();
     allUnits[0] = getUnit("meter");
 
-    expect(listUnitsByCategory("length").map((unit) => unit.id)).toContain("km");
+    expect(listUnitsByCategory("length").map((unit) => unit.id)).toContain(
+      "km"
+    );
     expect(listUnitsByCategory("mass")[0]?.id).toBe("mg");
   });
 });

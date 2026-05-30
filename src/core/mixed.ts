@@ -54,7 +54,7 @@ export function parseMixedMeasurement(input: string): MixedMeasurement {
 
     if (definition.category === "temperature") {
       throw new InvalidMeasurementError(
-        "Mixed measurements do not support temperature units. Use single temperature value like \"32 F\"."
+        'Mixed measurements do not support temperature units. Use single temperature value like "32 F".'
       );
     }
 

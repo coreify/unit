@@ -16,7 +16,10 @@ const unitsById = new Map<UnitId, UnitDefinition>(
   ])
 );
 const allUnits = Object.freeze([...unitsById.values()]);
-const unitsByCategory = new Map<MeasurementCategory, readonly UnitDefinition[]>();
+const unitsByCategory = new Map<
+  MeasurementCategory,
+  readonly UnitDefinition[]
+>();
 
 const aliases = new Map<string, UnitId>();
 

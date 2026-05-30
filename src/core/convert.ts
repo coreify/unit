@@ -23,7 +23,10 @@ export function convert(
   const fromUnit = getUnit(from);
   const toUnit = getUnit(to);
 
-  return applyPrecision(convertValue(value, fromUnit, toUnit, from, to), options);
+  return applyPrecision(
+    convertValue(value, fromUnit, toUnit, from, to),
+    options
+  );
 }
 
 export function convertMany(
@@ -41,7 +44,10 @@ export function convertMany(
       const toUnit = getUnit(unit);
       return [
         unit,
-        applyPrecision(convertValue(value, fromUnit, toUnit, from, unit), options)
+        applyPrecision(
+          convertValue(value, fromUnit, toUnit, from, unit),
+          options
+        )
       ];
     })
   );

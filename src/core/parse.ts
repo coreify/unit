@@ -6,7 +6,9 @@ import type { ParseMeasurementOptions, ParsedMeasurement } from "../types";
 const MEASUREMENT_PATTERN =
   /^\s*([+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:e[+-]?\d+)?)\s*([^\d\s].*?)\s*$/i;
 
-function categoryLabel(category: NonNullable<ParseMeasurementOptions["category"]>): string {
+function categoryLabel(
+  category: NonNullable<ParseMeasurementOptions["category"]>
+): string {
   return category.replace(/_/g, " ");
 }
 

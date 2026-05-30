@@ -13,7 +13,7 @@ export function createMeasurementSchema(
     parse(input) {
       if (options.required && input.trim() === "") {
         throw new InvalidMeasurementError(
-          "Measurement is required. Enter value with unit like \"12 kg\"."
+          'Measurement is required. Enter value with unit like "12 kg".'
         );
       }
 
@@ -28,7 +28,7 @@ export function createMeasurementSchema(
               {
                 code: "required",
                 message:
-                  "Measurement is required. Enter value with unit like \"12 kg\"."
+                  'Measurement is required. Enter value with unit like "12 kg".'
               }
             ]
           };
